@@ -1,4 +1,4 @@
-# PROJECTNAME
+##SOC-Detection-Lab
 
 ## Objective
 The SOC Detection Lab project was designed to simulate a real-world Security Operations Center (SOC) environment by building a centralized logging and detection platform using a SIEM. The lab focuses on ingesting Windows and Sysmon logs, generating realistic attack telemetry, and developing custom detection rules to identify suspicious activity.
