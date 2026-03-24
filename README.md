@@ -1,62 +1,95 @@
-# SOC-Detection-Lab
+# SOC Detection Lab
+
+<p align="center">
+  <img src="https://img.shields.io/badge/SIEM-Splunk-blue?style=for-the-badge&logo=splunk" />
+  <img src="https://img.shields.io/badge/Telemetry-Sysmon-orange?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Attack%20Simulation-Atomic%20Red%20Team-red?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Focus-SOC%20Detection-success?style=for-the-badge" />
+</p>
+
+---
 
 ## Objective
-The SOC Detection Lab project was designed to simulate a real-world Security Operations Center (SOC) environment by building a centralized logging and detection platform using a SIEM. The lab focuses on ingesting Windows and Sysmon logs, generating realistic attack telemetry, and developing custom detection rules to identify suspicious activity.
 
-This project demonstrates hands-on experience with threat detection, alert validation, and incident investigation—mirroring the workflow of a Tier 1 SOC Analyst.
+The **SOC Detection Lab** simulates a real-world Security Operations Center (SOC) by building a centralized logging and detection platform using Splunk.
 
-### Skills Learned
--SIEM log ingestion, normalization, and analysis
--Threat detection and alert development
--Windows Event Log and Sysmon analysis
--Identification of attack patterns (brute force, PowerShell abuse, network anomalies)
--MITRE ATT&CK mapping and adversary behavior understanding
--Incident investigation and alert triage workflows
--Security-focused troubleshooting and analytical thinking
+The lab focuses on:
+- Ingesting Windows and Sysmon logs
+- Generating realistic attack telemetry
+- Developing detection rules for suspicious activity
+- Investigating alerts like a Tier 1 SOC Analyst
 
-### Tools Used
-SIEM Platform: Splunk
-Endpoint Telemetry: Sysmon
-Log Forwarding: Splunk Universal Forwarder
-Attack Simulation: Atomic Red Team
-Network Analysis: Wireshark
-Virtualization: VirtualBox / VMware
+---
 
-Detection Use Cases
-1. Brute Force Login Detection
-Identifies multiple failed login attempts within a short timeframe
-Detects potential credential attacks
+## Skills Demonstrated
 
-2. Suspicious PowerShell Execution
-Detects encoded or obfuscated PowerShell commands
-Identifies unusual parent-child process relationships
+- SIEM log ingestion, parsing, and analysis  
+- Threat detection and alert engineering  
+- Windows Event Log & Sysmon analysis  
+- Detection of:
+  - Brute force attacks
+  - PowerShell abuse
+  - Suspicious file creation
+  - Network anomalies  
+- MITRE ATT&CK mapping  
+- Incident triage and investigation workflows  
+- Security-focused troubleshooting  
 
-3. Unusual Network Connections
-Flags outbound connections from suspicious processes
-Helps identify potential command-and-control activity
+---
 
-## Steps
-*Project Steps Go Here*
+## Tools & Technologies
+
+| Category | Tools |
+|--------|------|
+| SIEM | Splunk Enterprise |
+| Endpoint Telemetry | Sysmon |
+| Log Forwarding | Splunk Universal Forwarder |
+| Attack Simulation | Atomic Red Team |
+| Network Analysis | Wireshark |
+| Virtualization | VirtualBox / VMware |
+
+---
+
+## Detection Use Cases
+
+### Brute Force Detection
+- Detects multiple failed login attempts in a short timeframe  
+- Identifies credential attack patterns  
+- **MITRE ATT&CK:** T1110  
+
+---
+
+### Suspicious PowerShell Execution
+- Detects encoded and obfuscated commands  
+- Identifies abnormal execution patterns  
+- **MITRE ATT&CK:** T1059.001  
+
+---
+
+### Unusual Network Connections
+- Flags suspicious outbound connections  
+- Detects potential C2 communication  
+- **MITRE ATT&CK:** T1071  
+
+---
+
+### Suspicious File Creation
+- Uses Sysmon Event ID 11  
+- Detects file drops via PowerShell/CMD  
+- Identifies potential malware staging  
+- **MITRE ATT&CK:** T1105  
+
+---
+## Example Splunk Detection
+
+```spl
+index=* EventCode=11 
+(Image="*powershell.exe" OR Image="*cmd.exe")
+| stats count by Image, TargetFilename
+```
+
+##Splunk Dashboard
+<img width="1270" height="1336" alt="image" src="https://github.com/user-attachments/assets/037929d3-a842-4064-93f8-c426a090a989" />
 
 
-## Screenshots
-Screenshots
-Ref 1: Network Diagram
 
-(architecture diagram here)
-
-Ref 2: SIEM Dashboard
-
-(Splunk dashboard screenshot)
-
-Ref 3: Detection in Action
-
-(alert/query results screenshot)
-
-## MITRE ATT&CK Mapping
-
-| Technique | Description                                    |
-| --------- | ---------------------------------------------- |
-| T1110     | Brute Force                                    |
-| T1059     | Command and Scripting Interpreter (PowerShell) |
-| T1071     | Application Layer Protocol (C2 Traffic)        |
