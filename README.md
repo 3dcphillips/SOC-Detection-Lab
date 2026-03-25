@@ -47,6 +47,22 @@ Key objectives included:
 
 ---
 
+## Architecture Flow
+
+```text
+Windows 11 VM
+   ├── Sysmon Telemetry
+   └── Windows Security Logs
+          ↓
+Splunk Universal Forwarder
+          ↓
+Splunk Enterprise
+   ├── Detection Rules
+   ├── Alerts
+   └── SOC Dashboard
+```
+
+
 ## Skills Demonstrated
 
 - SIEM log ingestion, parsing, and analysis
@@ -105,6 +121,16 @@ Detects file creation in locations commonly associated with staging, persistence
 
 ---
 
+## MITRE ATT&CK Coverage
+
+- **T1059.001** – PowerShell
+- **T1110** – Brute Force
+- **T1071** – Application Layer Protocol
+- **T1105** – Ingress Tool Transfer
+- **T1218** – Signed Binary Proxy Execution
+
+---
+
 ## Example Splunk Detection
 
 ### Suspicious PowerShell Execution
@@ -139,3 +165,6 @@ The dashboard was designed to provide a SOC-style view of endpoint and authentic
 -Suspicious process creation
 -Unusual outbound connections
 -Suspicious file creation
+<img width="2547" height="1226" alt="image" src="https://github.com/user-attachments/assets/93e59e32-aae9-495f-89b0-f55fbe0f2356" />
+
+
