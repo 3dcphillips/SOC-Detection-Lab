@@ -1,0 +1,5 @@
+index=* source="XmlWinEventLog:Security" EventID=4625
+| eval src=if(IpAddress="-" OR isnull(IpAddress),"local",IpAddress)
+| stats count by host TargetUserName src LogonType
+| where count >= 5
+| sort -count
