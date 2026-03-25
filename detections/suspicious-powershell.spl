@@ -1,0 +1,4 @@
+index=* EventCode=1 Image="*\\powershell.exe"
+(CommandLine="*IEX*" OR CommandLine="*DownloadString*" OR CommandLine="*-enc*" OR CommandLine="*Invoke-Mimikatz*" OR CommandLine="*SharpHound*")
+| table _time host User ParentImage Image CommandLine
+| sort -_time
