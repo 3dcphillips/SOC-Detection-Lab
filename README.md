@@ -9,87 +9,133 @@
 
 ---
 
+## Overview
+
+The **SOC Detection Lab** is a hands-on security monitoring project built to simulate the workflow of a Tier 1 SOC Analyst. Using **Splunk**, **Sysmon**, **Windows Security logs**, and **Atomic Red Team**, I created a centralized detection lab to ingest telemetry, simulate attacker behavior, build detections, and investigate suspicious activity through a custom SOC dashboard.
+
+This project demonstrates practical experience with:
+- Log ingestion and normalization
+- Detection engineering
+- Alert validation
+- Threat investigation
+- SOC-style dashboard development
+
+---
+
 ## Objective
 
-The **SOC Detection Lab** simulates a real-world Security Operations Center (SOC) by building a centralized logging and detection platform using Splunk.
+The goal of this lab was to build a working security monitoring environment that could detect and visualize attacker-like behavior using real endpoint and Windows event telemetry.
 
-The lab focuses on:
-- Ingesting Windows and Sysmon logs
-- Generating realistic attack telemetry
-- Developing detection rules for suspicious activity
-- Investigating alerts like a Tier 1 SOC Analyst
+Key objectives included:
+- Ingesting Sysmon and Windows Security logs into Splunk
+- Simulating suspicious activity with Atomic Red Team
+- Building detections for common SOC use cases
+- Validating telemetry and detections through dashboard panels
+- Practicing alert triage and investigation workflows
+
+---
+
+## Lab Architecture
+
+- **SIEM:** Splunk Enterprise
+- **Endpoint Telemetry:** Sysmon
+- **Windows Logging:** Windows Security Event Logs
+- **Log Forwarding:** Splunk Universal Forwarder
+- **Attack Simulation:** Atomic Red Team
+- **Network Visibility:** Wireshark
+- **Virtualization:** VirtualBox / VMware
 
 ---
 
 ## Skills Demonstrated
 
-- SIEM log ingestion, parsing, and analysis  
-- Threat detection and alert engineering  
-- Windows Event Log & Sysmon analysis  
-- Detection of:
-  - Brute force attacks
-  - PowerShell abuse
-  - Suspicious file creation
-  - Network anomalies  
-- MITRE ATT&CK mapping  
-- Incident triage and investigation workflows  
-- Security-focused troubleshooting  
+- SIEM log ingestion, parsing, and analysis
+- Sysmon and Windows event log monitoring
+- Splunk search development and dashboard creation
+- Detection engineering for suspicious endpoint activity
+- Windows authentication event analysis
+- MITRE ATT&CK mapping
+- Alert validation and investigation
+- Security-focused troubleshooting and lab tuning
 
 ---
 
-## Tools & Technologies
+## Dashboard Detection Use Cases
 
-| Category | Tools |
-|--------|------|
-| SIEM | Splunk Enterprise |
-| Endpoint Telemetry | Sysmon |
-| Log Forwarding | Splunk Universal Forwarder |
-| Attack Simulation | Atomic Red Team |
-| Network Analysis | Wireshark |
-| Virtualization | VirtualBox / VMware |
+### 1. Suspicious PowerShell Execution
+Detects high-risk PowerShell behavior associated with encoded commands, in-memory execution, remote script retrieval, and offensive tooling.
+
+- **Data Source:** Sysmon Event ID 1
+- **Examples:** `IEX`, `DownloadString`, `-enc`, `Invoke-Mimikatz`, `SharpHound`
+- **MITRE ATT&CK:** `T1059.001 – PowerShell`
+
+### 2. Excessive Failed Logons / Brute Force Activity
+Identifies repeated failed authentication attempts that may indicate brute force or password spraying behavior.
+
+- **Data Source:** Windows Security Log
+- **Event ID:** 4625
+- **MITRE ATT&CK:** `T1110 – Brute Force`
+
+### 3. Successful Logon After Multiple Failures
+Highlights a suspicious authentication pattern where repeated failed logons are followed by a successful login.
+
+- **Data Source:** Windows Security Log
+- **Event IDs:** 4624, 4625
+- **MITRE ATT&CK:** `T1110 – Brute Force`
+
+### 4. Suspicious Process Execution
+Surfaces commonly abused Windows binaries and script execution tools often associated with attacker tradecraft.
+
+- **Data Source:** Sysmon Event ID 1
+- **Examples:** `cmd.exe`, `powershell.exe`, `wscript.exe`, `cscript.exe`, `rundll32.exe`, `regsvr32.exe`, `mshta.exe`
+- **MITRE ATT&CK:** `T1059`, `T1218`
+
+### 5. Suspicious Outbound Connections
+Flags network connections initiated by user-driven processes and script interpreters that may indicate command-and-control or external payload retrieval.
+
+- **Data Source:** Sysmon Event ID 3
+- **MITRE ATT&CK:** `T1071 – Application Layer Protocol`
+
+### 6. Suspicious File Creation in Sensitive Paths
+Detects file creation in locations commonly associated with staging, persistence, or payload delivery.
+
+- **Data Source:** Sysmon Event ID 11
+- **Examples:** Temp, AppData, Startup, Public folders
+- **MITRE ATT&CK:** `T1105 – Ingress Tool Transfer`
 
 ---
 
-## Detection Use Cases
-
-### Brute Force Detection
-- Detects multiple failed login attempts in a short timeframe  
-- Identifies credential attack patterns  
-- **MITRE ATT&CK:** T1110  
-
----
-
-### Suspicious PowerShell Execution
-- Detects encoded and obfuscated commands  
-- Identifies abnormal execution patterns  
-- **MITRE ATT&CK:** T1059.001  
-
----
-
-### Unusual Network Connections
-- Flags suspicious outbound connections  
-- Detects potential C2 communication  
-- **MITRE ATT&CK:** T1071  
-
----
-
-### Suspicious File Creation
-- Uses Sysmon Event ID 11  
-- Detects file drops via PowerShell/CMD  
-- Identifies potential malware staging  
-- **MITRE ATT&CK:** T1105  
-
----
 ## Example Splunk Detection
 
+### Suspicious PowerShell Execution
 ```spl
-index=* EventCode=11 
-(Image="*powershell.exe" OR Image="*cmd.exe")
-| stats count by Image, TargetFilename
+index=* EventCode=1 Image="*\\powershell.exe"
+(CommandLine="*IEX*" OR CommandLine="*DownloadString*" OR CommandLine="*-enc*" OR CommandLine="*Invoke-Mimikatz*" OR CommandLine="*SharpHound*")
+| table _time host User ParentImage Image CommandLine
+| sort -_time
 ```
+---
 
-##Splunk Dashboard
-<img width="1270" height="1336" alt="image" src="https://github.com/user-attachments/assets/037929d3-a842-4064-93f8-c426a090a989" />
+### Validation & Testing
 
+To validate detections, I simulated attack activity and suspicious behaviors in the lab environment using Atomic Red Team and manual authentication testing.
 
+### Validation included:
 
+Running PowerShell-based atomic tests
+Confirming Sysmon process creation events in Splunk
+Testing failed and successful logon patterns
+Reviewing command-line, process, network, and file creation telemetry
+Verifying dashboard visibility and SOC-style investigation context
+Dashboard
+
+### Dashboard
+The dashboard was designed to provide a SOC-style view of endpoint and authentication activity, with panels for:
+
+-Detection activity over time
+-Suspicious PowerShell execution
+-Failed logons / brute force attempts
+-Successful logons after repeated failures
+-Suspicious process creation
+-Unusual outbound connections
+-Suspicious file creation
