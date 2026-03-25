@@ -1,0 +1,4 @@
+index=* EventCode=1
+(Image="*\\cmd.exe" OR Image="*\\powershell.exe" OR Image="*\\wscript.exe" OR Image="*\\cscript.exe" OR Image="*\\rundll32.exe" OR Image="*\\regsvr32.exe" OR Image="*\\mshta.exe")
+| table _time host User ParentImage Image CommandLine
+| sort -_time
