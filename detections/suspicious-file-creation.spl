@@ -1,0 +1,5 @@
+index=* EventCode=11
+(TargetFilename="*\\Temp\\*" OR TargetFilename="*\\AppData\\*" OR TargetFilename="*\\Startup\\*" OR TargetFilename="*\\Public\\*")
+(TargetFilename="*.ps1" OR TargetFilename="*.bat" OR TargetFilename="*.vbs" OR TargetFilename="*.exe" OR TargetFilename="*.dll")
+| table _time host User Image TargetFilename ProcessGuid
+| sort -_time
